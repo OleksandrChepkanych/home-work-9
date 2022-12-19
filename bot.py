@@ -17,6 +17,33 @@ def input_error(func):
 
     return error_add
 
+def parser_comand(comand_line):
+    comand = comand_line.split(' ')
+    if (comand[0].lower() == "good" and comand[1].lower() == "bye") or comand[0].lower() ==  "close" or comand[0].lower() == "exit":
+        comand = "exit"
+        return comand
+    elif comand[0].lower() == "hello":
+        comand = "hello"
+        return comand
+    elif comand[0].lower() == "add":
+        comand = "add"
+        name = comand[1]
+        phone = comand[2]
+        return comand, name, phone
+    elif comand[0].lower() == "change":
+        comand = "change"
+        name = comand[1]
+        phone = comand[2]
+        return comand, name, phone
+    elif comand[0].lower() == "phone":
+        comand = "phone"
+        name = comand[1]
+        return comand, name
+    elif comand[0].lower() == "show" and comand[1].lower() == "all":
+        comand = "show"
+        return comand
+    
+    return comand_line
 
 def open_file(path):
     """Зчитання файлу"""
@@ -51,20 +78,32 @@ def main():
     open_file(path)
     while True:
         comand_line = input('Input comand: ')
-        comand = comand_line.split(' ')
-        if (comand[0].lower() == "good" and comand[1].lower() == "bye") or comand[0].lower() ==  "close" or comand[0].lower() == "exit":
+        
+        if len(parser_comand(comand_line)) < 2:
+            comand = parser_comand(comand_line)
+        elif len(parser_comand(comand_line)) == 2:
+            comand = parser_comand(comand_line[0])
+            name = parser_comand(comand_line[1])
+        elif len(parser_comand(comand_line)) == 3:
+            comand = parser_comand(comand_line[0])
+            name = parser_comand(comand_line[1])
+            phone = parser_comand(comand_line[2])
+        else: 
+            comand = parser_comand(comand_line)
+
+        if comand == "exit":
             print("Good bye!")
             close_file(path, contacts)
             break
-        elif comand[0].lower() == "hello":
+        elif comand == "hello":
             print("How can I help you?")
-        elif comand[0].lower() == "add":
-            handler_add_change(comand_line) if (len(comand[1]) > 2 or len(comand[2]) > 5) or len(comand) > 3 else print("Give me name and phone please")
-        elif comand[0].lower() == "change":
-            handler_add_change(comand_line) if len(comand[1]) > 2 else print("Give me name")
-        elif comand[0].lower() == "phone":
-            handler_phone(comand_line) if comand[1] in contacts else print("This contact not exists. Try to add")
-        elif comand[0].lower() == "show" and comand[1].lower() == "all":
+        elif comand == "add":
+            handler_add_change(name, phone) if (len(name) > 2 or len(phone) > 5) else print("Give me name and phone please")
+        elif comand == "change":
+            handler_add_change(name, phone) if len(name) > 2 else print("Give me name")
+        elif comand == "phone":
+            handler_phone(comand_line) if name in contacts else print("This contact not exists. Try to add")
+        elif comand == "show":
             print(contacts)
 # Виклик основної функції
 main()
